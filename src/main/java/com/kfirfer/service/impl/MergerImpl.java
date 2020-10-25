@@ -6,20 +6,24 @@ import com.kfirfer.model.FileType;
 import com.kfirfer.service.Merger;
 import com.kfirfer.util.JsonUtils;
 import org.atteo.xmlcombiner.XmlCombiner;
-
-import org.json.JSONObject;
-import org.json.JSONTokener;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
 public class MergerImpl implements Merger {
+
+    private final JSONParser parser = new JSONParser();
 
     @Override
     public List<File> merge(List<ConfigMetadata> configMetadataList) throws IOException, ParserConfigurationException, TransformerException, SAXException, ParseException {
@@ -67,34 +71,27 @@ public class MergerImpl implements Merger {
         if (firstElement.getFileType() == FileType.XML) {
             outputFile = mergerXml(files, outputFileName);
         }
-        if(firstElement.getFileType() == FileType.JSON) {
+        if (firstElement.getFileType() == FileType.JSON) {
             outputFile = mergeJson(files, outputFileName);
         }
-        
+
         return outputFile;
     }
-
 
     private File mergeJson(List<File> rootFiles, String outputFileName) throws IOException, ParseException {
         Path outputFile = Paths.get(outputFileName);
         JSONObject jsonObject = new JSONObject();
 
         for (File file : rootFiles) {
-
-            InputStream is = new FileInputStream(file);
-
-            JSONTokener tokener = new JSONTokener(is);
-            JSONObject obj = new JSONObject(tokener);
-
-            JSONObject jsonObjectFromFile = (JSONObject) obj;
-            jsonObject = JsonUtils.deepMerge(jsonObjectFromFile,jsonObject);
+            JSONObject jsonObjectFromFile = (JSONObject) parser.parse(
+                    new FileReader(file));//path to the JSON file.
+            jsonObject = JsonUtils.deepMerge(jsonObjectFromFile, jsonObject);
         }
         try (FileWriter fileWriter = new FileWriter(outputFile.toFile())) {
             fileWriter.write(jsonObject.toString());
         }
         return outputFile.toFile();
     }
-
 
     private File mergerXml(List<File> rootFiles, String outputFileName) throws IOException, ParserConfigurationException, TransformerException, SAXException {
         Path outputFile = Paths.get(outputFileName);
