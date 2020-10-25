@@ -9,6 +9,6 @@ public class ConfigMetadata {
 
     private String inputFile;
 
-    private Type type;
+    private FileType fileType;
 
 }

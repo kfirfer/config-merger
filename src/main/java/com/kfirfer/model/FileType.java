@@ -1,6 +1,6 @@
 package com.kfirfer.model;
 
-public enum Type {
+public enum FileType {
 
     XML, JSON, YAML, PROPERTIES
 
