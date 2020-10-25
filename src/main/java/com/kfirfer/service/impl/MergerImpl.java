@@ -82,9 +82,6 @@ public class MergerImpl implements Merger {
         for (File file : rootFiles) {
 
             InputStream is = new FileInputStream(file);
-            if (is == null) {
-                throw new NullPointerException("Cannot find resource file " + file);
-            }
 
             JSONTokener tokener = new JSONTokener(is);
             JSONObject obj = new JSONObject(tokener);
