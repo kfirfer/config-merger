@@ -1,6 +1,7 @@
 package com.kfirfer.service;
 
 import com.kfirfer.model.ConfigMetadata;
+import org.json.simple.parser.ParseException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -12,6 +13,6 @@ import java.util.List;
 
 public interface Merger {
 
-    List<File> merge(List<ConfigMetadata> configMetadataList) throws IOException, XMLStreamException, ParserConfigurationException, TransformerException, SAXException;
+    List<File> merge(List<ConfigMetadata> configMetadataList) throws IOException, XMLStreamException, ParserConfigurationException, TransformerException, SAXException, ParseException;
 
 }

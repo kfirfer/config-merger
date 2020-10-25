@@ -4,13 +4,17 @@ import com.kfirfer.exception.DuplicateFileTypeException;
 import com.kfirfer.model.ConfigMetadata;
 import com.kfirfer.model.FileType;
 import com.kfirfer.service.Merger;
+import com.kfirfer.util.JsonUtils;
 import org.atteo.xmlcombiner.XmlCombiner;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.json.simple.parser.ParseException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -18,7 +22,7 @@ import java.util.*;
 public class MergerImpl implements Merger {
 
     @Override
-    public List<File> merge(List<ConfigMetadata> configMetadataList) throws IOException, ParserConfigurationException, TransformerException, SAXException {
+    public List<File> merge(List<ConfigMetadata> configMetadataList) throws IOException, ParserConfigurationException, TransformerException, SAXException, ParseException {
 
         Map<String, List<ConfigMetadata>> filesMap = new HashMap<>();
         Map<String, FileType> tempTypes = new HashMap<>();
@@ -40,7 +44,7 @@ public class MergerImpl implements Merger {
 
     }
 
-    private List<File> mergeFiles(Map<String, List<ConfigMetadata>> filesMap) throws IOException, ParserConfigurationException, TransformerException, SAXException {
+    private List<File> mergeFiles(Map<String, List<ConfigMetadata>> filesMap) throws IOException, ParserConfigurationException, TransformerException, SAXException, ParseException {
         Iterator it = filesMap.entrySet().iterator();
         List<File> filesList = new ArrayList<>();
         while (it.hasNext()) {
@@ -52,18 +56,46 @@ public class MergerImpl implements Merger {
 
     }
 
-    private File mergeFile(String outputFileName, List<ConfigMetadata> configMetadataFiles) throws IOException, ParserConfigurationException, TransformerException, SAXException {
+    private File mergeFile(String outputFileName, List<ConfigMetadata> configMetadataFiles) throws IOException, ParserConfigurationException, TransformerException, SAXException, ParseException {
         File outputFile = new File(outputFileName);
         List<File> files = new ArrayList<>();
 
         for (ConfigMetadata configMetadata : configMetadataFiles) {
             files.add(new File(configMetadata.getInputFile()));
         }
-
-        if (configMetadataFiles.get(0).getFileType() == FileType.XML) {
+        ConfigMetadata firstElement = configMetadataFiles.get(0);
+        if (firstElement.getFileType() == FileType.XML) {
             outputFile = mergerXml(files, outputFileName);
         }
+        if(firstElement.getFileType() == FileType.JSON) {
+            outputFile = mergeJson(files, outputFileName);
+        }
+        
         return outputFile;
+    }
+
+
+    private File mergeJson(List<File> rootFiles, String outputFileName) throws IOException, ParseException {
+        Path outputFile = Paths.get(outputFileName);
+        JSONObject jsonObject = new JSONObject();
+
+        for (File file : rootFiles) {
+
+            InputStream is = new FileInputStream(file);
+            if (is == null) {
+                throw new NullPointerException("Cannot find resource file " + file);
+            }
+
+            JSONTokener tokener = new JSONTokener(is);
+            JSONObject obj = new JSONObject(tokener);
+
+            JSONObject jsonObjectFromFile = (JSONObject) obj;
+            jsonObject = JsonUtils.deepMerge(jsonObjectFromFile,jsonObject);
+        }
+        try (FileWriter fileWriter = new FileWriter(outputFile.toFile())) {
+            fileWriter.write(jsonObject.toString());
+        }
+        return outputFile.toFile();
     }
 
 
