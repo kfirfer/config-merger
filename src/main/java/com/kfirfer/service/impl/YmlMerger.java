@@ -32,12 +32,40 @@ public class YmlMerger {
         this.snakeYaml = new Yaml(dumperOptions);
     }
 
+    private static IllegalArgumentException unknownValueType(String key, Object yamlValue) {
+        final String msg = "Cannot mergeYamlFiles element of unknown type: " + key + ": " + yamlValue.getClass().getName();
+        return new IllegalArgumentException(msg);
+    }
+
+    private static Object addToMergedResult(Map<String, Object> mergedResult, String key, Object yamlValue) {
+        return mergedResult.put(key, yamlValue);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void mergeLists(Map<String, Object> mergedResult, String key, Object yamlValue) {
+        if (!(yamlValue instanceof List && mergedResult.get(key) instanceof List)) {
+            throw new IllegalArgumentException("Cannot mergeYamlFiles a list with a non-list: " + key);
+        }
+
+        List<Object> originalList = (List<Object>) mergedResult.get(key);
+        originalList.addAll((List<Object>) yamlValue);
+    }
+
+    public static List<Path> stringsToPaths(String[] pathsStr) {
+        Set<Path> paths = new LinkedHashSet<>();
+        for (String pathStr : pathsStr) {
+            paths.add(Paths.get(pathStr));
+        }
+        List<Path> pathsList = new ArrayList<>(paths.size());
+        pathsList.addAll(paths);
+        return pathsList;
+    }
+
     public YmlMerger setVariablesToReplace(Map<String, String> vars) {
         this.variablesToReplace.clear();
         this.variablesToReplace.putAll(vars);
         return this;
     }
-
 
     public Map<String, Object> mergeYamlFiles(String[] pathsStr) throws IOException {
         return mergeYamlFiles(stringsToPaths(pathsStr));
@@ -128,45 +156,15 @@ public class YmlMerger {
         }
     }
 
-    private static IllegalArgumentException unknownValueType(String key, Object yamlValue) {
-        final String msg = "Cannot mergeYamlFiles element of unknown type: " + key + ": " + yamlValue.getClass().getName();
-        return new IllegalArgumentException(msg);
-    }
-
-    private static Object addToMergedResult(Map<String, Object> mergedResult, String key, Object yamlValue) {
-        return mergedResult.put(key, yamlValue);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void mergeLists(Map<String, Object> mergedResult, String key, Object yamlValue) {
-        if (!(yamlValue instanceof List && mergedResult.get(key) instanceof List)) {
-            throw new IllegalArgumentException("Cannot mergeYamlFiles a list with a non-list: " + key);
-        }
-
-        List<Object> originalList = (List<Object>) mergedResult.get(key);
-        originalList.addAll((List<Object>) yamlValue);
-    }
-
-
     public String mergeToString(List<Path> filesToMerge) throws IOException {
         Map<String, Object> merged = mergeYamlFiles(filesToMerge);
         return exportToString(merged);
     }
 
-    public String exportToString(Map<String, Object> merged) {
-        return snakeYaml.dump(merged);
-    }
-
     // Util methods
 
-    public static List<Path> stringsToPaths(String[] pathsStr) {
-        Set<Path> paths = new LinkedHashSet<>();
-        for (String pathStr : pathsStr) {
-            paths.add(Paths.get(pathStr));
-        }
-        List<Path> pathsList = new ArrayList<>(paths.size());
-        pathsList.addAll(paths);
-        return pathsList;
+    public String exportToString(Map<String, Object> merged) {
+        return snakeYaml.dump(merged);
     }
 
 }

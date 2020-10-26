@@ -83,7 +83,7 @@ public class MergerImpl implements Merger {
         Path outputFile = Paths.get(outputFileName);
         YmlMerger ymlMerger = new YmlMerger();
         List<Path> filesPaths = new ArrayList<>();
-        for(File file : files) {
+        for (File file : files) {
             filesPaths.add(file.toPath());
         }
         String mergedYaml = ymlMerger.mergeToString(filesPaths);
