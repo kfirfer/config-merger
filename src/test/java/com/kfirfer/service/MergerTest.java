@@ -17,7 +17,7 @@ import java.util.List;
 
 public class MergerTest {
 
-    private static Merger merger = new MergerImpl();
+    private static final Merger merger = new MergerImpl();
 
     @Test
     public void testMergerXml() throws IOException, XMLStreamException, TransformerException, ParserConfigurationException, SAXException, ParseException {
@@ -55,6 +55,24 @@ public class MergerTest {
         configMetadata.setInputFile("tests/input/files-3-2.json");
         configMetadata.setOutputFile("tests/output/files-3-output.json");
         configMetadata.setFileType(FileType.JSON);
+        filesList.add(configMetadata);
+
+        List<File> files = merger.merge(filesList);
+        System.out.println(files);
+    }
+
+    @Test
+    public void testMergerYaml() throws IOException, XMLStreamException, TransformerException, ParserConfigurationException, SAXException, ParseException {
+        List<ConfigMetadata> filesList = new ArrayList<>();
+        ConfigMetadata configMetadata = new ConfigMetadata();
+        configMetadata.setInputFile("tests/input/files-4-1.yaml");
+        configMetadata.setOutputFile("tests/output/files-4-output.yaml");
+        configMetadata.setFileType(FileType.YAML);
+        filesList.add(configMetadata);
+        configMetadata = new ConfigMetadata();
+        configMetadata.setInputFile("tests/input/files-4-2.yaml");
+        configMetadata.setOutputFile("tests/output/files-4-output.yaml");
+        configMetadata.setFileType(FileType.YAML);
         filesList.add(configMetadata);
 
         List<File> files = merger.merge(filesList);

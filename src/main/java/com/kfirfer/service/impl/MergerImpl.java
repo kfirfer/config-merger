@@ -13,10 +13,7 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -75,7 +72,25 @@ public class MergerImpl implements Merger {
             outputFile = mergeJson(files, outputFileName);
         }
 
+        if (firstElement.getFileType() == FileType.YAML) {
+            outputFile = mergeYaml(files, outputFileName);
+        }
+
         return outputFile;
+    }
+
+    private File mergeYaml(List<File> files, String outputFileName) throws IOException {
+        Path outputFile = Paths.get(outputFileName);
+        YmlMerger ymlMerger = new YmlMerger();
+        List<Path> filesPaths = new ArrayList<>();
+        for(File file : files) {
+            filesPaths.add(file.toPath());
+        }
+        String mergedYaml = ymlMerger.mergeToString(filesPaths);
+        try (PrintWriter out = new PrintWriter(outputFile.toFile())) {
+            out.println(mergedYaml);
+        }
+        return outputFile.toFile();
     }
 
     private File mergeJson(List<File> rootFiles, String outputFileName) throws IOException, ParseException {
