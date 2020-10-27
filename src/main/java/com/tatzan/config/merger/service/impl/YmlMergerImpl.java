@@ -106,6 +106,16 @@ public class YmlMergerImpl implements YmlMerger {
         return mergedResult;
     }
 
+    public Map<String, Object> mergeYamlStrings(List<String> yamlStrings) {
+        Map<String, Object> mergedResult = new LinkedHashMap<>();
+        for (String yamlString : yamlStrings) {
+            final Map<String, Object> yamlToMerge = this.snakeYaml.load(yamlString);
+            // Merge into results map.
+            mergeStructures(mergedResult, yamlToMerge);
+        }
+        return mergedResult;
+    }
+
     @SuppressWarnings("unchecked")
     private void mergeStructures(Map<String, Object> targetTree, Map<String, Object> sourceTree) {
         if (sourceTree == null) return;

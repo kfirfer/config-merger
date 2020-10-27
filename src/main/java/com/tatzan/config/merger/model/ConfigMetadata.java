@@ -5,9 +5,11 @@ import lombok.Data;
 @Data
 public class ConfigMetadata {
 
-    private String outputFile;
+    private String inputFilePath;
 
-    private String inputFile;
+    private String inputString;
+
+    private String outputFile;
 
     private FileType fileType;
 

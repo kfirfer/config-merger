@@ -17,4 +17,8 @@ public interface YmlMerger {
 
     Map<String, Object> mergeYamlFiles(List<Path> paths) throws IOException;
 
+    Map<String, Object> mergeYamlStrings(List<String> yamlStrings);
+
+    String exportToString(Map<String, Object> merged);
+
 }
