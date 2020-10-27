@@ -103,20 +103,6 @@ public class ConfigMergerImpl implements ConfigMerger {
         return outputFile;
     }
 
-    private File mergeYamlFiles(List<File> files, String outputFileName) throws IOException {
-        Path outputFile = Paths.get(outputFileName);
-        YmlMerger ymlMerger = new YmlMergerImpl();
-        List<Path> filesPaths = new ArrayList<>();
-        for (File file : files) {
-            filesPaths.add(file.toPath());
-        }
-        String mergedYaml = ymlMerger.mergeToString(filesPaths);
-        try (PrintWriter out = new PrintWriter(outputFile.toFile())) {
-            out.println(mergedYaml);
-        }
-        return outputFile.toFile();
-    }
-
     private File mergeYamlStrings(List<Object> elements, String outputFileName) throws IOException {
         Path outputFile = Paths.get(outputFileName);
         YmlMerger ymlMerger = new YmlMergerImpl();
@@ -137,21 +123,6 @@ public class ConfigMergerImpl implements ConfigMerger {
         return outputFile.toFile();
     }
 
-    private File mergeJsonFiles(List<File> rootFiles, String outputFileName) throws IOException, ParseException {
-        Path outputFile = Paths.get(outputFileName);
-        JSONObject jsonObject = new JSONObject();
-
-        for (File file : rootFiles) {
-            JSONObject jsonObjectFromFile = (JSONObject) parser.parse(
-                    new FileReader(file));//path to the JSON file.
-            jsonObject = JsonUtils.deepMerge(jsonObjectFromFile, jsonObject);
-        }
-        try (FileWriter fileWriter = new FileWriter(outputFile.toFile())) {
-            fileWriter.write(jsonObject.toString());
-        }
-        return outputFile.toFile();
-    }
-
     private File mergeJsonStrings(List<Object> elements, String outputFileName) throws IOException, ParseException {
         Path outputFile = Paths.get(outputFileName);
         JSONObject jsonObject = new JSONObject();
@@ -168,16 +139,6 @@ public class ConfigMergerImpl implements ConfigMerger {
             fileWriter.write(jsonObject.toString());
         }
         return outputFile.toFile();
-    }
-
-    private File mergeXmlFiles(List<File> rootFiles, String outputFileName) throws IOException, ParserConfigurationException, TransformerException, SAXException {
-        Path outputFile = Paths.get(outputFileName);
-        XmlCombiner combiner = new XmlCombiner();
-        for (File file : rootFiles) {
-            combiner.combine(file.toPath());
-        }
-        combiner.buildDocument(outputFile);
-        return new File(outputFileName);
     }
 
     private File mergeXmlStrings(List<Object> elements, String outputFileName) throws IOException, ParserConfigurationException, TransformerException, SAXException {

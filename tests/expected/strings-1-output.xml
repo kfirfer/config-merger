@@ -1,0 +1,17 @@
+<root>
+  <entry>
+    <string>arr</string>
+    <list>
+      <string>bbb</string>
+      <string>aaa</string>
+    </list>
+  </entry>
+  <entry>
+    <string>key1</string>
+    <string>value1</string>
+  </entry>
+  <entry>
+    <string>key2</string>
+    <string>value2</string>
+  </entry>
+</root>

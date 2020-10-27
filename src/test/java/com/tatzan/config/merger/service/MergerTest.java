@@ -4,7 +4,11 @@ import com.tatzan.config.merger.model.ConfigMetadata;
 import com.tatzan.config.merger.model.FileType;
 import com.tatzan.config.merger.service.impl.ConfigSerializationImpl;
 import com.tatzan.config.merger.service.impl.ConfigMergerImpl;
+import org.apache.commons.io.FileUtils;
 import org.json.simple.parser.ParseException;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -45,7 +49,10 @@ public class MergerTest {
 
 
         List<File> files = merger.merge(filesList);
-        System.out.println(files);
+
+        Assert.assertNotNull(files);
+        Assert.assertTrue(compareFilesContent(new File("tests/output/files-1-output.xml"), new File("tests/expected/files-1-output.xml")));
+        Assert.assertTrue(compareFilesContent(new File("tests/output/files-2-output.xml"), new File("tests/expected/files-2-output.xml")));
     }
 
     @Test
@@ -63,7 +70,10 @@ public class MergerTest {
         filesList.add(configMetadata);
 
         List<File> files = merger.merge(filesList);
-        System.out.println(files);
+        Assert.assertNotNull(files);
+
+        Assert.assertTrue(compareFilesContent(new File("tests/output/files-3-output.json"), new File("tests/expected/files-3-output.json")));
+
     }
 
     @Test
@@ -81,7 +91,10 @@ public class MergerTest {
         filesList.add(configMetadata);
 
         List<File> files = merger.merge(filesList);
-        System.out.println(files);
+
+        Assert.assertNotNull(files);
+
+        Assert.assertTrue(compareFilesContent(new File("tests/output/files-4-output.yaml"), new File("tests/expected/files-4-output.yaml")));
     }
 
 
@@ -305,9 +318,9 @@ public class MergerTest {
 
         Map<String, Object> outputMap = merger.mergeMaps(mapList);
 
-        configSerialization.mapToJson(outputMap, "tests/output/files-10-output.json");
-        configSerialization.mapToYaml(outputMap, "tests/output/files-10-output.yaml");
-        configSerialization.mapToXml(outputMap, "tests/output/files-10-output.xml", "root");
+        configSerialization.mapToJson(outputMap, "tests/output/strings-1-output.json");
+        configSerialization.mapToYaml(outputMap, "tests/output/strings-1-output.yaml");
+        configSerialization.mapToXml(outputMap, "tests/output/strings-1-output.xml", "root");
 
     }
 
@@ -330,6 +343,10 @@ public class MergerTest {
         File file = new File("tests/input/files-1-2.xml");
         Object outputObject = configSerialization.xmlFileToObject(file);
         System.out.println(outputObject);
+    }
+
+    public static boolean compareFilesContent(File file1, File file2) throws IOException {
+        return FileUtils.contentEquals(file1, file2);
     }
 
 }
