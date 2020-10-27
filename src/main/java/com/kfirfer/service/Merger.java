@@ -22,7 +22,7 @@ public interface Merger {
 
     File mapToJson(Map<String, Object> map, String outputFilePath) throws FileNotFoundException;
 
-    File mapToYaml(Map<String, Object> map,String  outputFilePath) throws FileNotFoundException ;
+    File mapToYaml(Map<String, Object> map, String outputFilePath) throws FileNotFoundException;
 
     File mapToXml(Map<String, Object> map, String outputFilePath, String rootElement) throws FileNotFoundException, JAXBException;
 }
