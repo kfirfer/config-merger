@@ -2,6 +2,7 @@ package com.kfirfer.service.impl;
 
 
 import com.github.mustachejava.DefaultMustacheFactory;
+import com.kfirfer.service.YmlMerger;
 import org.apache.commons.io.IOUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -15,19 +16,18 @@ import java.util.*;
  * (c) Copyright 2013-2015 Jonathan Cobb
  * This code is available under the Apache License, version 2: http://www.apache.org/licenses/LICENSE-2.0.html
  */
-public class YmlMerger {
+public class YmlMergerImpl implements YmlMerger {
 
     public static final DefaultMustacheFactory DEFAULT_MUSTACHE_FACTORY = new DefaultMustacheFactory();
 
     private final Yaml snakeYaml;
     private Map<String, Object> variablesToReplace = new HashMap<>();
 
-    public YmlMerger() {
+    public YmlMergerImpl() {
         // See https://github.com/spariev/snakeyaml/blob/master/src/test/java/org/yaml/snakeyaml/DumperOptionsTest.java
         DumperOptions dumperOptions = new DumperOptions();
         dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
         dumperOptions.setPrettyFlow(true);
-        //dumperOptions.setCanonical(true);
         dumperOptions.setTimeZone(TimeZone.getTimeZone("UTC"));
         this.snakeYaml = new Yaml(dumperOptions);
     }
@@ -61,7 +61,7 @@ public class YmlMerger {
         return pathsList;
     }
 
-    public YmlMerger setVariablesToReplace(Map<String, String> vars) {
+    public YmlMergerImpl setVariablesToReplace(Map<String, String> vars) {
         this.variablesToReplace.clear();
         this.variablesToReplace.putAll(vars);
         return this;

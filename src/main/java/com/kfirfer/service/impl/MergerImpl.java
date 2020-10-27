@@ -1,15 +1,22 @@
 package com.kfirfer.service.impl;
 
+import com.google.gson.Gson;
 import com.kfirfer.exception.DuplicateFileTypeException;
 import com.kfirfer.model.ConfigMetadata;
 import com.kfirfer.model.FileType;
 import com.kfirfer.service.Merger;
+import com.kfirfer.service.YmlMerger;
 import com.kfirfer.util.JsonUtils;
+import com.kfirfer.util.MapUtils;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.atteo.xmlcombiner.XmlCombiner;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.xml.sax.SAXException;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -41,8 +48,56 @@ public class MergerImpl implements Merger {
         }
 
         return mergeFiles(filesMap);
+    }
 
+    @Override
+    public Map<String, Object> mergeMaps(List<Map<String, Object>> mapList) {
+        Map<String, Object> outputMap = new HashMap<>();
+        for (Map<String, Object> map : mapList) {
+            outputMap = MapUtils.deepMerge(outputMap, map);
+        }
+        return outputMap;
+    }
 
+    @Override
+    public File mapToJson(Map<String, Object> map, String outputFilePath) throws FileNotFoundException {
+        File outputFile = new File(outputFilePath);
+        Gson gson = new Gson();
+        String json = gson.toJson(map);
+
+        try (PrintWriter out = new PrintWriter(outputFile)) {
+            out.println(json);
+        }
+        return outputFile;
+    }
+
+    @Override
+    public File mapToYaml(Map<String, Object> map, String outputFilePath) throws FileNotFoundException {
+        File outputFile = new File(outputFilePath);
+        DumperOptions options = new DumperOptions();
+        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setPrettyFlow(true);
+
+        Yaml yaml = new Yaml(options);
+        String output = yaml.dump(map);
+
+        try (PrintWriter out = new PrintWriter(outputFile)) {
+            out.println(output);
+        }
+
+        return null;
+    }
+
+    @Override
+    public File mapToXml(Map<String, Object> map, String outputFilePath, String rootElement) throws FileNotFoundException {
+        File outputFile = new File(outputFilePath);
+        XStream xStream = new XStream(new DomDriver());
+        xStream.alias(rootElement, java.util.Map.class);
+        String xml = xStream.toXML(map);
+        try (PrintWriter out = new PrintWriter(outputFile)) {
+            out.println(xml);
+        }
+        return outputFile;
     }
 
     private List<File> mergeFiles(Map<String, List<ConfigMetadata>> filesMap) throws IOException, ParserConfigurationException, TransformerException, SAXException, ParseException {
@@ -81,7 +136,7 @@ public class MergerImpl implements Merger {
 
     private File mergeYaml(List<File> files, String outputFileName) throws IOException {
         Path outputFile = Paths.get(outputFileName);
-        YmlMerger ymlMerger = new YmlMerger();
+        YmlMerger ymlMerger = new YmlMergerImpl();
         List<Path> filesPaths = new ArrayList<>();
         for (File file : files) {
             filesPaths.add(file.toPath());

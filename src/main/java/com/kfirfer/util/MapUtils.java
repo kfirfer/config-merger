@@ -1,11 +1,13 @@
 package com.kfirfer.util;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-public class JsonUtils {
+import java.util.List;
+import java.util.Map;
 
-    public static JSONObject deepMerge(JSONObject source, JSONObject target) {
+public class MapUtils {
+
+    public static Map<String, Object> deepMerge(Map<String, Object> source, Map<String, Object> target) {
         source.keySet().forEach(key ->
         {
             Object value = source.get(key);
@@ -14,13 +16,13 @@ public class JsonUtils {
                 target.put(key, value);
             } else {
                 // existing value for "key" - recursively deep merge:
-                if (value instanceof JSONObject) {
-                    JSONObject valueJson = (JSONObject) value;
+                if (value instanceof Map) {
+                    Map valueJson = (Map) value;
                     deepMerge(valueJson, (JSONObject) target.get(key));
-                } else if (value instanceof JSONArray) {
-                    ((JSONArray) value).forEach(
+                } else if (value instanceof List) {
+                    ((List) value).forEach(
                             jsonobj ->
-                                    ((JSONArray) target.get(key)).add(jsonobj));
+                                    ((List) target.get(key)).add(jsonobj));
 
                 } else {
                     target.put(key, value);
