@@ -1,13 +1,13 @@
-package com.kfirfer.service.impl;
+package com.tatzan.config.merger.service.impl;
 
 import com.google.gson.Gson;
-import com.kfirfer.exception.DuplicateFileTypeException;
-import com.kfirfer.model.ConfigMetadata;
-import com.kfirfer.model.FileType;
-import com.kfirfer.service.Merger;
-import com.kfirfer.service.YmlMerger;
-import com.kfirfer.util.JsonUtils;
-import com.kfirfer.util.MapUtils;
+import com.tatzan.config.merger.exception.DuplicateFileTypeException;
+import com.tatzan.config.merger.model.ConfigMetadata;
+import com.tatzan.config.merger.model.FileType;
+import com.tatzan.config.merger.service.Merger;
+import com.tatzan.config.merger.util.JsonUtils;
+import com.tatzan.config.merger.util.MapUtils;
+import com.tatzan.config.merger.service.YmlMerger;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.atteo.xmlcombiner.XmlCombiner;

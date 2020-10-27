@@ -1,4 +1,4 @@
-package com.kfirfer.exception;
+package com.tatzan.config.merger.exception;
 
 public class DuplicateFileTypeException extends RuntimeException {
 

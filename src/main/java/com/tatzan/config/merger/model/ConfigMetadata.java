@@ -1,4 +1,4 @@
-package com.kfirfer.model;
+package com.tatzan.config.merger.model;
 
 import lombok.Data;
 

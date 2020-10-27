@@ -1,6 +1,6 @@
-package com.kfirfer.service;
+package com.tatzan.config.merger.service;
 
-import com.kfirfer.service.impl.YmlMergerImpl;
+import com.tatzan.config.merger.service.impl.YmlMergerImpl;
 
 import java.io.IOException;
 import java.nio.file.Path;

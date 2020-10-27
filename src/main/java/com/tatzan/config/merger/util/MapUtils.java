@@ -1,4 +1,4 @@
-package com.kfirfer.util;
+package com.tatzan.config.merger.util;
 
 import org.json.simple.JSONObject;
 

@@ -1,8 +1,8 @@
-package com.kfirfer.service;
+package com.tatzan.config.merger.service;
 
-import com.kfirfer.model.ConfigMetadata;
-import com.kfirfer.model.FileType;
-import com.kfirfer.service.impl.MergerImpl;
+import com.tatzan.config.merger.model.ConfigMetadata;
+import com.tatzan.config.merger.model.FileType;
+import com.tatzan.config.merger.service.impl.MergerImpl;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
 import org.xml.sax.SAXException;

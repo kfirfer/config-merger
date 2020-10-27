@@ -1,8 +1,8 @@
-package com.kfirfer.service.impl;
+package com.tatzan.config.merger.service.impl;
 
 
 import com.github.mustachejava.DefaultMustacheFactory;
-import com.kfirfer.service.YmlMerger;
+import com.tatzan.config.merger.service.YmlMerger;
 import org.apache.commons.io.IOUtils;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
