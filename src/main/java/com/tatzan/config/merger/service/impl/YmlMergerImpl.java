@@ -75,7 +75,7 @@ public class YmlMergerImpl implements YmlMerger {
      * Merges the files at given paths to a map representing the resulting YAML structure.
      */
     public Map<String, Object> mergeYamlFiles(List<Path> paths) throws IOException {
-        Map<String, Object> mergedResult = new LinkedHashMap<String, Object>();
+        Map<String, Object> mergedResult = new LinkedHashMap<>();
         for (Path yamlFilePath : paths) {
             InputStream in = null;
             try {
@@ -94,7 +94,7 @@ public class YmlMergerImpl implements YmlMerger {
 
                 // Parse the YAML.
                 String yamlString = writer.toString();
-                final Map<String, Object> yamlToMerge = (Map<String, Object>) this.snakeYaml.load(yamlString);
+                final Map<String, Object> yamlToMerge = this.snakeYaml.load(yamlString);
 
                 // Merge into results map.
                 mergeStructures(mergedResult, yamlToMerge);

@@ -2,7 +2,8 @@ package com.tatzan.config.merger.service;
 
 import com.tatzan.config.merger.model.ConfigMetadata;
 import com.tatzan.config.merger.model.FileType;
-import com.tatzan.config.merger.service.impl.MergerImpl;
+import com.tatzan.config.merger.service.impl.ConfigSerializationImpl;
+import com.tatzan.config.merger.service.impl.ConfigMergerImpl;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -20,7 +21,8 @@ import java.util.Map;
 
 public class MergerTest {
 
-    private static final Merger merger = new MergerImpl();
+    private static final ConfigMerger merger = new ConfigMergerImpl();
+    private static final ConfigSerialization configSerialization = new ConfigSerializationImpl();
 
     @Test
     public void testMergerXml() throws IOException, XMLStreamException, TransformerException, ParserConfigurationException, SAXException, ParseException {
@@ -104,10 +106,31 @@ public class MergerTest {
 
         Map<String, Object> outputMap = merger.mergeMaps(mapList);
 
-        merger.mapToJson(outputMap, "tests/output/files-10-output.json");
-        merger.mapToYaml(outputMap, "tests/output/files-10-output.yaml");
-        merger.mapToXml(outputMap, "tests/output/files-10-output.xml", "root");
+        configSerialization.mapToJson(outputMap, "tests/output/files-10-output.json");
+        configSerialization.mapToYaml(outputMap, "tests/output/files-10-output.yaml");
+        configSerialization.mapToXml(outputMap, "tests/output/files-10-output.xml", "root");
 
+    }
+
+    @Test
+    public void testJsonFileToMap() throws IOException {
+        File file = new File("tests/input/files-3-1.json");
+        Map<String, Object> outputMap = configSerialization.jsonFileToMap(file);
+        System.out.println(outputMap);
+    }
+
+    @Test
+    public void testYamlFileToMap() throws IOException {
+        File file = new File("tests/input/files-4-1.yaml");
+        Map<String, Object> outputMap = configSerialization.yamlFileToMap(file);
+        System.out.println(outputMap);
+    }
+
+    @Test
+    public void testXmlFileToObject() throws IOException, JAXBException, TransformerException, ParserConfigurationException, SAXException {
+        File file = new File("tests/input/files-1-2.xml");
+        Object outputObject = configSerialization.xmlFileToObject(file);
+        System.out.println(outputObject);
     }
 
 }
