@@ -248,7 +248,39 @@ public class MergerTest {
         System.out.println(files);
     }
 
+    @Test
+    public void testMergerJsonStrings() throws IOException, XMLStreamException, TransformerException, ParserConfigurationException, SAXException, ParseException {
+        List<ConfigMetadata> filesList = new ArrayList<>();
+        ConfigMetadata configMetadata = new ConfigMetadata();
+        configMetadata.setInputString("{\n" +
+                "  \"property1\": \"value1\",\n" +
+                "  \"deep_property\": {\n" +
+                "    \"array1\": [\n" +
+                "      \"arr1\",\n" +
+                "      \"arr2\"\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}");
+        configMetadata.setOutputFile("tests/output/files-3-output.json");
+        configMetadata.setFileType(FileType.JSON);
+        filesList.add(configMetadata);
+        configMetadata = new ConfigMetadata();
+        configMetadata.setInputString("{\n" +
+                "  \"property2\": \"value2\",\n" +
+                "  \"deep_property\": {\n" +
+                "    \"array1\": [\n" +
+                "      \"arr3\",\n" +
+                "      \"arr4\"\n" +
+                "    ]\n" +
+                "  }\n" +
+                "}");
+        configMetadata.setOutputFile("tests/output/files-3-output.json");
+        configMetadata.setFileType(FileType.JSON);
+        filesList.add(configMetadata);
 
+        List<File> files = merger.merge(filesList);
+        System.out.println(files);
+    }
 
 
     @Test
