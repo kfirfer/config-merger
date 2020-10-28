@@ -8,6 +8,8 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -175,6 +177,42 @@ public class YmlMergerImpl implements YmlMerger {
 
     public String exportToString(Map<String, Object> merged) {
         return snakeYaml.dump(merged);
+    }
+
+    @Override
+    public File mergeYaml(List<Object> elements, String outputFileName) throws IOException {
+        Path outputFile = Paths.get(outputFileName);
+        List<String> yamlStrings = new ArrayList<>();
+        for (Object yaml : elements) {
+            if (yaml instanceof File) {
+                String content = Files.readString(((File) yaml).toPath(), StandardCharsets.UTF_8);
+                yamlStrings.add(content);
+            } else {
+                yamlStrings.add((String) yaml);
+            }
+        }
+        Map<String, Object> mergedYaml = mergeYamlStrings(yamlStrings);
+        String mergedYamlString = exportToString(mergedYaml);
+        try (PrintWriter out = new PrintWriter(outputFile.toFile())) {
+            out.println(mergedYamlString);
+        }
+        return outputFile.toFile();
+    }
+
+    @Override
+    public String mergeYaml(List<Object> elements) throws IOException {
+        List<String> yamlStrings = new ArrayList<>();
+        for (Object yaml : elements) {
+            if (yaml instanceof File) {
+                String content = Files.readString(((File) yaml).toPath(), StandardCharsets.UTF_8);
+                yamlStrings.add(content);
+            } else {
+                yamlStrings.add((String) yaml);
+            }
+        }
+        Map<String, Object> mergedYaml = mergeYamlStrings(yamlStrings);
+        String mergedYamlString = exportToString(mergedYaml);
+        return mergedYamlString;
     }
 
 }

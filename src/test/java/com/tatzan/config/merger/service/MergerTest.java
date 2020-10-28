@@ -1,13 +1,12 @@
 package com.tatzan.config.merger.service;
 
 import com.tatzan.config.merger.model.ConfigMetadata;
+import com.tatzan.config.merger.model.ConfigResult;
 import com.tatzan.config.merger.model.FileType;
-import com.tatzan.config.merger.service.impl.ConfigSerializationImpl;
 import com.tatzan.config.merger.service.impl.ConfigMergerImpl;
+import com.tatzan.config.merger.service.impl.ConfigSerializationImpl;
 import org.apache.commons.io.FileUtils;
 import org.json.simple.parser.ParseException;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
@@ -48,7 +47,7 @@ public class MergerTest {
         filesList.add(configMetadata);
 
 
-        List<File> files = merger.merge(filesList);
+        List<ConfigResult> files = merger.merge(filesList, true);
 
         Assert.assertNotNull(files);
         Assert.assertTrue(compareFilesContent(new File("tests/output/files-1-output.xml"), new File("tests/expected/files-1-output.xml")));
@@ -69,7 +68,7 @@ public class MergerTest {
         configMetadata.setFileType(FileType.JSON);
         filesList.add(configMetadata);
 
-        List<File> files = merger.merge(filesList);
+        List<ConfigResult> files = merger.merge(filesList, true);
         Assert.assertNotNull(files);
 
         Assert.assertTrue(compareFilesContent(new File("tests/output/files-3-output.json"), new File("tests/expected/files-3-output.json")));
@@ -90,9 +89,9 @@ public class MergerTest {
         configMetadata.setFileType(FileType.YAML);
         filesList.add(configMetadata);
 
-        List<File> files = merger.merge(filesList);
+        List<ConfigResult> configResultList = merger.merge(filesList, true);
 
-        Assert.assertNotNull(files);
+        Assert.assertNotNull(configResultList);
 
         Assert.assertTrue(compareFilesContent(new File("tests/output/files-4-output.yaml"), new File("tests/expected/files-4-output.yaml")));
     }
@@ -123,7 +122,7 @@ public class MergerTest {
         configMetadata.setFileType(FileType.YAML);
         filesList.add(configMetadata);
 
-        List<File> files = merger.merge(filesList);
+        List<ConfigResult> files = merger.merge(filesList, true);
         System.out.println(files);
     }
 
@@ -257,7 +256,7 @@ public class MergerTest {
         filesList.add(configMetadata);
 
 
-        List<File> files = merger.merge(filesList);
+        List<ConfigResult> files = merger.merge(filesList, true);
         System.out.println(files);
     }
 
@@ -291,7 +290,7 @@ public class MergerTest {
         configMetadata.setFileType(FileType.JSON);
         filesList.add(configMetadata);
 
-        List<File> files = merger.merge(filesList);
+        List<ConfigResult> files = merger.merge(filesList, true);
         System.out.println(files);
     }
 

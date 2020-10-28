@@ -3,33 +3,31 @@ package com.tatzan.config.merger.service.impl;
 import com.tatzan.config.merger.exception.DuplicateFileTypeException;
 import com.tatzan.config.merger.exception.DuplicateInputException;
 import com.tatzan.config.merger.model.ConfigMetadata;
+import com.tatzan.config.merger.model.ConfigResult;
 import com.tatzan.config.merger.model.FileType;
 import com.tatzan.config.merger.service.ConfigMerger;
+import com.tatzan.config.merger.service.JsonMerger;
+import com.tatzan.config.merger.service.XmlMerger;
 import com.tatzan.config.merger.service.YmlMerger;
-import com.tatzan.config.merger.util.JsonUtils;
 import com.tatzan.config.merger.util.MapUtils;
-import org.atteo.xmlcombiner.XmlCombiner;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class ConfigMergerImpl implements ConfigMerger {
 
-    private final JSONParser parser = new JSONParser();
+    private final XmlMerger xmlMerger = new XmlMergerImpl();
+    private final JsonMerger jsonMerger = new JsonMergerImpl();
+    private final YmlMerger ymlMerger = new YmlMergerImpl();
 
     @Override
-    public List<File> merge(List<ConfigMetadata> configMetadataList) throws IOException, ParserConfigurationException, TransformerException, SAXException, ParseException {
-
+    public List<ConfigResult> merge(List<ConfigMetadata> configMetadataList, boolean writeFile) throws IOException, ParserConfigurationException, TransformerException, SAXException, ParseException {
         Map<String, List<ConfigMetadata>> filesMap = new HashMap<>();
         Map<String, FileType> tempTypes = new HashMap<>();
 
@@ -43,7 +41,7 @@ public class ConfigMergerImpl implements ConfigMerger {
             filesList.add(configMetadata);
         }
 
-        return mergeConfigs(filesMap);
+        return mergeConfigs(filesMap, writeFile);
     }
 
     private void validations(Map<String, FileType> tempTypes, ConfigMetadata configMetadata) {
@@ -64,20 +62,19 @@ public class ConfigMergerImpl implements ConfigMerger {
         return outputMap;
     }
 
-
-    private List<File> mergeConfigs(Map<String, List<ConfigMetadata>> configMaps) throws IOException, ParserConfigurationException, TransformerException, SAXException, ParseException {
+    private List<ConfigResult> mergeConfigs(Map<String, List<ConfigMetadata>> configMaps, boolean writeFile) throws IOException, ParserConfigurationException, TransformerException, SAXException, ParseException {
         Iterator iterator = configMaps.entrySet().iterator();
-        List<File> filesList = new ArrayList<>();
+        List<ConfigResult> filesList = new ArrayList<>();
         while (iterator.hasNext()) {
             Map.Entry pair = (Map.Entry) iterator.next();
-            filesList.add(mergeConfig((String) pair.getKey(), (List<ConfigMetadata>) pair.getValue()));
+            filesList.add(mergeConfig((String) pair.getKey(), (List<ConfigMetadata>) pair.getValue(), writeFile));
             iterator.remove();
         }
         return filesList;
     }
 
-    private File mergeConfig(String outputFileName, List<ConfigMetadata> configMetadataList) throws IOException, ParserConfigurationException, TransformerException, SAXException, ParseException {
-        File outputFile = new File(outputFileName);
+    private ConfigResult mergeConfig(String outputFileName, List<ConfigMetadata> configMetadataList, boolean writeFile) throws IOException, ParserConfigurationException, TransformerException, SAXException, ParseException {
+        ConfigResult configResult = new ConfigResult();
         List<Object> elements = new ArrayList<>();
 
         for (ConfigMetadata configMetadata : configMetadataList) {
@@ -89,77 +86,29 @@ public class ConfigMergerImpl implements ConfigMerger {
         }
 
         ConfigMetadata firstElement = configMetadataList.get(0);
+        String content = "";
 
         if (firstElement.getFileType() == FileType.XML) {
-            outputFile = mergeXmlStrings(elements, outputFileName);
+            content = xmlMerger.mergeXml(elements);
         }
         if (firstElement.getFileType() == FileType.JSON) {
-            outputFile = mergeJsonStrings(elements, outputFileName);
+            content = jsonMerger.mergeJson(elements);
         }
         if (firstElement.getFileType() == FileType.YAML) {
-            outputFile = mergeYamlStrings(elements, outputFileName);
+            content = ymlMerger.mergeYaml(elements);
         }
 
-        return outputFile;
-    }
-
-    private File mergeYamlStrings(List<Object> elements, String outputFileName) throws IOException {
-        Path outputFile = Paths.get(outputFileName);
-        YmlMerger ymlMerger = new YmlMergerImpl();
-        List<String> yamlStrings = new ArrayList<>();
-        for (Object yaml : elements) {
-            if (yaml instanceof File) {
-                String content = Files.readString(((File) yaml).toPath(), StandardCharsets.UTF_8);
-                yamlStrings.add(content);
-            } else {
-                yamlStrings.add((String) yaml);
+        if (writeFile) {
+            File file = new File(outputFileName);
+            try (FileWriter fileWriter = new FileWriter(file)) {
+                fileWriter.write(content);
             }
         }
-        Map<String, Object> mergedYaml = ymlMerger.mergeYamlStrings(yamlStrings);
-        String mergedYamlString = ymlMerger.exportToString(mergedYaml);
-        try (PrintWriter out = new PrintWriter(outputFile.toFile())) {
-            out.println(mergedYamlString);
-        }
-        return outputFile.toFile();
+
+        configResult.setOutputFilePath(outputFileName);
+        configResult.setContent(content);
+        return configResult;
     }
 
-    private File mergeJsonStrings(List<Object> elements, String outputFileName) throws IOException, ParseException {
-        Path outputFile = Paths.get(outputFileName);
-        JSONObject jsonObject = new JSONObject();
-        for (Object json : elements) {
-            JSONObject inputJsonObject;
-            if (json instanceof String) {
-                inputJsonObject = (JSONObject) parser.parse((String) json);
-            } else {
-                inputJsonObject = (JSONObject) parser.parse(new FileReader((File) json));//path to the JSON file.
-            }
-            jsonObject = JsonUtils.deepMerge(inputJsonObject, jsonObject);
-        }
-        try (FileWriter fileWriter = new FileWriter(outputFile.toFile())) {
-            fileWriter.write(jsonObject.toString());
-        }
-        return outputFile.toFile();
-    }
-
-    private File mergeXmlStrings(List<Object> elements, String outputFileName) throws IOException, ParserConfigurationException, TransformerException, SAXException {
-        Path outputFile = Paths.get(outputFileName);
-        XmlCombiner combiner = new XmlCombiner();
-        for (Object xml : elements) {
-
-            if (xml instanceof String) {
-                File tempFile = File.createTempFile("prefix-", "-suffix");
-                try (FileWriter fileWriter = new FileWriter(tempFile)) {
-                    fileWriter.write((String) xml);
-                }
-                combiner.combine(tempFile.toPath());
-                tempFile.deleteOnExit();
-            } else {
-                Path path = ((File) xml).toPath();
-                combiner.combine(path);
-            }
-        }
-        combiner.buildDocument(outputFile);
-        return new File(outputFileName);
-    }
 
 }

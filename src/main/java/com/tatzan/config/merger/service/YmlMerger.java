@@ -2,6 +2,7 @@ package com.tatzan.config.merger.service;
 
 import com.tatzan.config.merger.service.impl.YmlMergerImpl;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -20,5 +21,9 @@ public interface YmlMerger {
     Map<String, Object> mergeYamlStrings(List<String> yamlStrings);
 
     String exportToString(Map<String, Object> merged);
+
+    File mergeYaml(List<Object> elements, String outputFileName) throws IOException;
+
+    String mergeYaml(List<Object> elements) throws IOException;
 
 }
