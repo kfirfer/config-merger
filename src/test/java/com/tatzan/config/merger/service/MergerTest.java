@@ -47,9 +47,9 @@ public class MergerTest {
         filesList.add(configMetadata);
 
 
-        List<ConfigResult> files = merger.merge(filesList, true);
+        List<ConfigResult> configResultList = merger.merge(filesList, true);
 
-        Assert.assertNotNull(files);
+        Assert.assertNotNull(configResultList);
         Assert.assertTrue(compareFilesContent(new File("tests/output/files-1-output.xml"), new File("tests/expected/files-1-output.xml")));
         Assert.assertTrue(compareFilesContent(new File("tests/output/files-2-output.xml"), new File("tests/expected/files-2-output.xml")));
     }
@@ -68,8 +68,8 @@ public class MergerTest {
         configMetadata.setFileType(FileType.JSON);
         filesList.add(configMetadata);
 
-        List<ConfigResult> files = merger.merge(filesList, true);
-        Assert.assertNotNull(files);
+        List<ConfigResult> configResultList = merger.merge(filesList, true);
+        Assert.assertNotNull(configResultList);
 
         Assert.assertTrue(compareFilesContent(new File("tests/output/files-3-output.json"), new File("tests/expected/files-3-output.json")));
 
@@ -122,8 +122,8 @@ public class MergerTest {
         configMetadata.setFileType(FileType.YAML);
         filesList.add(configMetadata);
 
-        List<ConfigResult> files = merger.merge(filesList, true);
-        System.out.println(files);
+        List<ConfigResult> configResultList = merger.merge(filesList, true);
+        System.out.println(configResultList);
     }
 
 
@@ -256,8 +256,8 @@ public class MergerTest {
         filesList.add(configMetadata);
 
 
-        List<ConfigResult> files = merger.merge(filesList, true);
-        System.out.println(files);
+        List<ConfigResult> configResultList = merger.merge(filesList, true);
+        System.out.println(configResultList);
     }
 
     @Test
@@ -290,8 +290,8 @@ public class MergerTest {
         configMetadata.setFileType(FileType.JSON);
         filesList.add(configMetadata);
 
-        List<ConfigResult> files = merger.merge(filesList, true);
-        System.out.println(files);
+        List<ConfigResult> configResultList = merger.merge(filesList, true);
+        System.out.println(configResultList);
     }
 
 
