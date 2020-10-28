@@ -27,6 +27,10 @@ public class MergerTest {
     private static final ConfigMerger merger = new ConfigMergerImpl();
     private static final ConfigSerialization configSerialization = new ConfigSerializationImpl();
 
+    public static boolean compareFilesContent(File file1, File file2) throws IOException {
+        return FileUtils.contentEquals(file1, file2);
+    }
+
     @Test
     public void testMergerXml() throws IOException, XMLStreamException, TransformerException, ParserConfigurationException, SAXException, ParseException {
         List<ConfigMetadata> filesList = new ArrayList<>();
@@ -96,7 +100,6 @@ public class MergerTest {
         Assert.assertTrue(compareFilesContent(new File("tests/output/files-4-output.yaml"), new File("tests/expected/files-4-output.yaml")));
     }
 
-
     @Test
     public void testMergerYamlString() throws IOException, XMLStreamException, TransformerException, ParserConfigurationException, SAXException, ParseException {
         List<ConfigMetadata> filesList = new ArrayList<>();
@@ -125,7 +128,6 @@ public class MergerTest {
         List<ConfigResult> configResultList = merger.merge(filesList, true);
         System.out.println(configResultList);
     }
-
 
     @Test
     public void testMergerXmlString() throws IOException, XMLStreamException, TransformerException, ParserConfigurationException, SAXException, ParseException {
@@ -294,7 +296,6 @@ public class MergerTest {
         System.out.println(configResultList);
     }
 
-
     @Test
     public void testMergeMaps() throws IOException, JAXBException {
         List<Map<String, Object>> mapList = new ArrayList<>();
@@ -342,10 +343,6 @@ public class MergerTest {
         File file = new File("tests/input/files-1-2.xml");
         Object outputObject = configSerialization.xmlFileToObject(file);
         System.out.println(outputObject);
-    }
-
-    public static boolean compareFilesContent(File file1, File file2) throws IOException {
-        return FileUtils.contentEquals(file1, file2);
     }
 
 }
