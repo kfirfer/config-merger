@@ -38,7 +38,6 @@ public class JsonMergerImpl implements JsonMerger {
         JSONObject jsonObject = new JSONObject();
         List<Object> elementList = (List<Object>) elements;
         for (Object json : elementList) {
-            System.out.println(json.getClass().getName());
             JSONObject inputJsonObject;
             if (json instanceof String) {
                 inputJsonObject = (JSONObject) parser.parse((String) json);
