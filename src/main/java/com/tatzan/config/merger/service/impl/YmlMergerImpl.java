@@ -2,6 +2,7 @@ package com.tatzan.config.merger.service.impl;
 
 
 import com.github.mustachejava.DefaultMustacheFactory;
+import com.tatzan.config.merger.exception.UnsupportedObjectException;
 import com.tatzan.config.merger.service.YmlMerger;
 import org.apache.commons.io.IOUtils;
 import org.yaml.snakeyaml.DumperOptions;
@@ -182,17 +183,7 @@ public class YmlMergerImpl implements YmlMerger {
     @Override
     public File mergeYaml(List<Object> elements, String outputFileName) throws IOException {
         Path outputFile = Paths.get(outputFileName);
-        List<String> yamlStrings = new ArrayList<>();
-        for (Object yaml : elements) {
-            if (yaml instanceof File) {
-                String content = Files.readString(((File) yaml).toPath(), StandardCharsets.UTF_8);
-                yamlStrings.add(content);
-            } else {
-                yamlStrings.add((String) yaml);
-            }
-        }
-        Map<String, Object> mergedYaml = mergeYamlStrings(yamlStrings);
-        String mergedYamlString = exportToString(mergedYaml);
+        String mergedYamlString = this.mergeYaml(elements);
         try (PrintWriter out = new PrintWriter(outputFile.toFile())) {
             out.println(mergedYamlString);
         }
@@ -206,8 +197,10 @@ public class YmlMergerImpl implements YmlMerger {
             if (yaml instanceof File) {
                 String content = Files.readString(((File) yaml).toPath(), StandardCharsets.UTF_8);
                 yamlStrings.add(content);
-            } else {
+            } else if (yaml instanceof String) {
                 yamlStrings.add((String) yaml);
+            } else {
+                throw new UnsupportedObjectException("Only File/String objects are supported");
             }
         }
         Map<String, Object> mergedYaml = mergeYamlStrings(yamlStrings);

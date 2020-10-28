@@ -8,8 +8,10 @@ import java.util.List;
 
 public interface JsonMerger {
 
-    File mergeJson(List<Object> elements, String outputFileName) throws ParseException, IOException;
+    String mergeJsonStrings(List<String> jsonStrings) throws ParseException, IOException;
 
-    String mergeJson(List<Object> elements) throws ParseException, IOException;
+    String mergeJsonFiles(List<File> jsonFiles) throws ParseException, IOException;
+
+    String mergeJson(List<Object> jsonStrings) throws ParseException, IOException;
 
 }

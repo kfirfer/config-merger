@@ -10,8 +10,10 @@ import java.util.List;
 
 public interface XmlMerger {
 
-    File mergeXml(List<Object> elements, String outputFileName) throws IOException, SAXException, TransformerException, ParserConfigurationException;
+    String mergeXmlStrings(List<String> elements) throws IOException, ParserConfigurationException, SAXException, TransformerException;
 
-    String mergeXml(List<Object> elements) throws IOException, ParserConfigurationException, SAXException, TransformerException;
+    String mergeXmlFiles(List<File> elements) throws IOException, ParserConfigurationException, SAXException, TransformerException;
+
+    String mergeXml(Object elements) throws IOException, ParserConfigurationException, SAXException, TransformerException;
 
 }
