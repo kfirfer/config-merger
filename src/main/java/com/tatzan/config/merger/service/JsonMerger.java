@@ -1,5 +1,6 @@
 package com.tatzan.config.merger.service;
 
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import java.io.File;
@@ -13,5 +14,7 @@ public interface JsonMerger {
     String mergeJsonFiles(List<File> jsonFiles) throws ParseException, IOException;
 
     String mergeJson(List<Object> jsonStrings) throws ParseException, IOException;
+
+    JSONObject mergeJsonAndGetJsonObject(Object elements) throws IOException, ParseException;
 
 }

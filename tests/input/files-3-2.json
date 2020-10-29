@@ -1,5 +1,6 @@
 {
   "property2": "value2",
+  "url": "https://example.com",
   "deep_property": {
     "array1": [
       "arr3",

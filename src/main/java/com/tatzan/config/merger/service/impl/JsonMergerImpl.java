@@ -1,5 +1,7 @@
 package com.tatzan.config.merger.service.impl;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.tatzan.config.merger.exception.UnsupportedObjectException;
 import com.tatzan.config.merger.service.JsonMerger;
 import com.tatzan.config.merger.util.JsonUtils;
@@ -15,26 +17,27 @@ import java.util.List;
 public class JsonMergerImpl implements JsonMerger {
 
     private final JSONParser parser = new JSONParser();
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @Override
     public String mergeJsonFiles(List<File> jsonFiles) throws ParseException, IOException {
-        JSONObject jsonObject = getJsonObject(jsonFiles);
-        return jsonObject.toString();
+        JSONObject jsonObject = mergeJsonAndGetJsonObject(jsonFiles);
+        return gson.toJson(jsonObject);
     }
 
     @Override
     public String mergeJsonStrings(List<String> elements) throws ParseException, IOException {
-        JSONObject jsonObject = getJsonObject(elements);
-        return jsonObject.toString();
+        JSONObject jsonObject = mergeJsonAndGetJsonObject(elements);
+        return gson.toJson(jsonObject);
     }
 
     @Override
     public String mergeJson(List<Object> jsons) throws ParseException, IOException {
-        JSONObject jsonObject = getJsonObject(jsons);
-        return jsonObject.toString();
+        JSONObject jsonObject = mergeJsonAndGetJsonObject(jsons);
+        return gson.toJson(jsonObject);
     }
 
-    private JSONObject getJsonObject(Object elements) throws ParseException, IOException {
+    public JSONObject mergeJsonAndGetJsonObject(Object elements) throws IOException, ParseException {
         JSONObject jsonObject = new JSONObject();
         List<Object> elementList = (List<Object>) elements;
         for (Object json : elementList) {
