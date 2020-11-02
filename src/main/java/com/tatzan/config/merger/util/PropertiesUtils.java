@@ -1,10 +1,10 @@
 package com.tatzan.config.merger.util;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.StringReader;
-import java.io.StringWriter;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 public class PropertiesUtils {
 
@@ -16,9 +16,12 @@ public class PropertiesUtils {
         return p;
     }
 
-    public static String getPropertyAsString(Properties prop) {
-        StringWriter writer = new StringWriter();
-        prop.list(new PrintWriter(writer));
-        return writer.getBuffer().toString();
+    public static String getPropertyAsString(Properties properties) {
+        StringBuilder stringBuilder = new StringBuilder(100);
+        Set<Map.Entry<Object, Object>> entries = properties.entrySet();
+        for (Map.Entry<Object, Object> entry : entries) {
+            stringBuilder.append(entry.getKey() + "=" + entry.getValue() + "\n");
+        }
+        return stringBuilder.toString();
     }
 }
