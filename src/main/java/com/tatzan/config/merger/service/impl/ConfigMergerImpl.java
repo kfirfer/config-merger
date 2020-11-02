@@ -5,10 +5,7 @@ import com.tatzan.config.merger.exception.DuplicateInputException;
 import com.tatzan.config.merger.model.ConfigMetadata;
 import com.tatzan.config.merger.model.ConfigResult;
 import com.tatzan.config.merger.model.FileType;
-import com.tatzan.config.merger.service.ConfigMerger;
-import com.tatzan.config.merger.service.JsonMerger;
-import com.tatzan.config.merger.service.XmlMerger;
-import com.tatzan.config.merger.service.YmlMerger;
+import com.tatzan.config.merger.service.*;
 import com.tatzan.config.merger.util.MapUtils;
 import org.json.simple.parser.ParseException;
 import org.xml.sax.SAXException;
@@ -25,6 +22,7 @@ public class ConfigMergerImpl implements ConfigMerger {
     private final XmlMerger xmlMerger = new XmlMergerImpl();
     private final JsonMerger jsonMerger = new JsonMergerImpl();
     private final YmlMerger ymlMerger = new YmlMergerImpl();
+    private final PropertiesMerger propertiesMerger = new PropertiesMergerImpl();
 
     @Override
     public List<ConfigResult> merge(List<ConfigMetadata> configMetadataList, boolean writeFile) throws IOException, ParserConfigurationException, TransformerException, SAXException, ParseException {
@@ -96,6 +94,9 @@ public class ConfigMergerImpl implements ConfigMerger {
         }
         if (firstElement.getFileType() == FileType.YAML) {
             content = ymlMerger.mergeYaml(elements);
+        }
+        if (firstElement.getFileType() == FileType.PROPERTIES) {
+            content = propertiesMerger.mergeProperties(elements);
         }
 
         if (writeFile) {
