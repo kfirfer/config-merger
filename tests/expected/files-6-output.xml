@@ -1,8 +1,10 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project>
     <dependencies>
         <dependency>
-            <groupId>tttttt</groupId>
+            <groupId>a</groupId>
+        </dependency>
+        <dependency>
+            <groupId>b</groupId>
         </dependency>
     </dependencies>
 </project>

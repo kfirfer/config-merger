@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><project>
-    <dependencies>
+<project>
+    <dependencies combine.children='append'>
         <dependency>
-            <groupId>rrrrr</groupId>
+            <groupId>a</groupId>
         </dependency>
     </dependencies>
-    <something>ddd</something>
 </project>

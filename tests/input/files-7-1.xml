@@ -11,13 +11,12 @@
         <jacoco.version>0.8.5</jacoco.version>
     </properties>
 
-    <dependencies>
+    <dependencies combine.children='append'>
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>1.14</version>
         </dependency>
     </dependencies>
-
 
 </project>
