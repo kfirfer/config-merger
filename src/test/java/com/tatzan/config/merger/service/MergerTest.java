@@ -345,4 +345,80 @@ public class MergerTest {
         System.out.println(outputObject);
     }
 
+
+    @Test
+    public void testMergerXmlString2() throws IOException, XMLStreamException, TransformerException, ParserConfigurationException, SAXException, ParseException {
+        List<ConfigMetadata> filesList = new ArrayList<>();
+        ConfigMetadata configMetadata = new ConfigMetadata();
+        configMetadata.setInputString("<project>\n" +
+                "<dependencies>\n" +
+                "<dependency>\n" +
+                "<groupId>rrrrr</groupId>\n" +
+                "</dependency>\n" +
+                "</dependencies>\n" +
+                "</project>");
+        configMetadata.setOutputFile("tests/output/files-1-output.xml");
+        configMetadata.setFileType(FileType.XML);
+        filesList.add(configMetadata);
+        configMetadata = new ConfigMetadata();
+        configMetadata.setInputString("<project>\n" +
+                "<dependencies>\n" +
+                "<dependency>\n" +
+                "<groupId>tttttt</groupId>\n" +
+                "</dependency>\n" +
+                "</dependencies>\n" +
+                "</project>");
+        configMetadata.setOutputFile("tests/output/files-1-output.xml");
+        configMetadata.setFileType(FileType.XML);
+        filesList.add(configMetadata);
+
+
+        List<ConfigResult> configResultList = merger.merge(filesList, true);
+        System.out.println(configResultList);
+    }
+
+
+    @Test
+    public void testMergerXml2() throws IOException, XMLStreamException, TransformerException, ParserConfigurationException, SAXException, ParseException {
+        List<ConfigMetadata> filesList = new ArrayList<>();
+        ConfigMetadata configMetadata = new ConfigMetadata();
+        configMetadata.setInputFilePath("tests/input/files-6-1.xml");
+        configMetadata.setOutputFile("tests/output/files-6-output.xml");
+        configMetadata.setFileType(FileType.XML);
+        filesList.add(configMetadata);
+        configMetadata = new ConfigMetadata();
+        configMetadata.setInputFilePath("tests/input/files-6-2.xml");
+        configMetadata.setOutputFile("tests/output/files-6-output.xml");
+        configMetadata.setFileType(FileType.XML);
+        filesList.add(configMetadata);
+
+        List<ConfigResult> configResultList = merger.merge(filesList, true);
+
+        Assert.assertNotNull(configResultList);
+        Assert.assertTrue(compareFilesContent(new File("tests/output/files-6-output.xml"), new File("tests/expected/files-6-output.xml")));
+
+    }
+
+
+    @Test
+    public void testMergerXml3() throws IOException, XMLStreamException, TransformerException, ParserConfigurationException, SAXException, ParseException {
+        List<ConfigMetadata> filesList = new ArrayList<>();
+        ConfigMetadata configMetadata = new ConfigMetadata();
+        configMetadata.setInputFilePath("tests/input/files-7-1.xml");
+        configMetadata.setOutputFile("tests/output/files-7-output.xml");
+        configMetadata.setFileType(FileType.XML);
+        filesList.add(configMetadata);
+        configMetadata = new ConfigMetadata();
+        configMetadata.setInputFilePath("tests/input/files-7-2.xml");
+        configMetadata.setOutputFile("tests/output/files-7-output.xml");
+        configMetadata.setFileType(FileType.XML);
+        filesList.add(configMetadata);
+
+        List<ConfigResult> configResultList = merger.merge(filesList, true);
+
+        Assert.assertNotNull(configResultList);
+        Assert.assertTrue(compareFilesContent(new File("tests/output/files-7-output.xml"), new File("tests/expected/files-7-output.xml")));
+
+    }
+
 }
