@@ -1,5 +1,5 @@
 <project>
-    <dependencies>
+    <dependencies combine.children='append'>
         <dependency>
             <groupId>b</groupId>
         </dependency>
